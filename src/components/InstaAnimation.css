@@ -1,0 +1,147 @@
+.insta-phone-container {
+    width: 300px;
+    height: 600px;
+    margin: 0 auto;
+    perspective: 1000px;
+}
+
+.phone-bezel {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.phone-screen {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.status-bar {
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 10;
+}
+
+.search-screen {
+    padding: 20px;
+    background: white;
+    height: 100%;
+}
+
+.search-bar-ui {
+    background: #efefef;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-text {
+    font-size: 14px;
+    color: #262626;
+}
+
+.cursor {
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.avatar-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #FFD700;
+}
+
+.search-info .username {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.search-info .subtext {
+    color: #8e8e8e;
+    font-size: 12px;
+}
+
+.profile-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.profile-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.finger-cursor {
+    position: absolute;
+    font-size: 40px;
+    top: 38%;
+    /* Adjusted to roughly hit the follow button area */
+    left: 45%;
+    z-index: 100;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    pointer-events: none;
+}
+
+.follow-success-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.success-popup {
+    background: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    font-weight: bold;
+    transform: scale(1.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
