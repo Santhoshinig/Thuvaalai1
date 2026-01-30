@@ -5,9 +5,9 @@ import ProductModal from '../components/ProductModal';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRight, Star, ChevronLeft, ChevronRight } from 'lucide-react';
-import heroVideo from '../assets/Thuvaalai Version 1.mp4';
 import '../App.css';
 
+/* -------------------- SECTION WRAPPER -------------------- */
 const Section = ({ title, subtitle, children, id, bg = 'default' }) => (
   <section
     id={id}
@@ -36,8 +36,12 @@ const Section = ({ title, subtitle, children, id, bg = 'default' }) => (
   </section>
 );
 
+/* -------------------- CATEGORY CARD -------------------- */
 const CategoryCard = ({ item }) => (
-  <Link to={`/collection?category=${item.slug}`} className="home-category-card home-category-card--circle">
+  <Link
+    to={`/collection?category=${item.slug}`}
+    className="home-category-card home-category-card--circle"
+  >
     <motion.div
       className="home-category-card-inner"
       whileHover={{ y: -6 }}
@@ -51,10 +55,14 @@ const CategoryCard = ({ item }) => (
         style={{ backgroundImage: `url(${item.image})` }}
       />
       <h3 className="home-category-circle-title">{item.title}</h3>
+      {item.description && (
+        <p className="home-category-description">{item.description}</p>
+      )}
     </motion.div>
   </Link>
 );
 
+/* -------------------- PRODUCT CARD -------------------- */
 const FeaturedProductCard = ({ item, onClick }) => (
   <motion.div
     className="product-card"
@@ -79,6 +87,7 @@ const FeaturedProductCard = ({ item, onClick }) => (
   </motion.div>
 );
 
+/* -------------------- TESTIMONIAL CARD -------------------- */
 const TestimonialCard = ({ item }) => (
   <motion.div
     className="testimonial-card"
@@ -100,25 +109,29 @@ const TestimonialCard = ({ item }) => (
   </motion.div>
 );
 
+/* ========================== HOME ========================== */
 const Home = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
-  const videoRef = useRef(null);
   const location = useLocation();
 
   const handleExploreCategories = (e) => {
     if (location.pathname === '/') {
       e.preventDefault();
-      document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' });
+      document
+        .getElementById('categories')
+        ?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
+  /* -------------------- HERO SLIDES -------------------- */
   const heroSlides = [
     {
       id: 0,
       title: 'Natural fibres, everyday comfort.',
-      mode: 'video',
-      video: heroVideo,
+      image: '/images/DSCF4055.jpg',
+      mode: 'full',
+      textMode: 'light',
     },
     {
       id: 1,
@@ -148,6 +161,7 @@ const Home = () => {
     },
   ];
 
+  /* -------------------- DATA -------------------- */
   const categoryTiles = [
     {
       id: 1,
@@ -208,19 +222,22 @@ const Home = () => {
       id: 1,
       name: 'Customer Name 1',
       location: 'City, India',
-      text: 'Lovely quality and very soft on the skin. The weave feels premium and the finish is neat.',
+      text:
+        'Lovely quality and very soft on the skin. The weave feels premium and the finish is neat.',
     },
     {
       id: 2,
       name: 'Customer Name 2',
       location: 'City, India',
-      text: 'The cotton feels breathable and comfortable. Happy with the stitching and the fit.',
+      text:
+        'The cotton feels breathable and comfortable. Happy with the stitching and the fit.',
     },
     {
       id: 3,
       name: 'Customer Name 3',
       location: 'City, India',
-      text: 'Simple, elegant designs that work well for everyday use. Planning to reorder in more colours.',
+      text:
+        'Simple, elegant designs that work well for everyday use. Planning to reorder in more colours.',
     },
   ];
 
@@ -237,106 +254,83 @@ const Home = () => {
     },
   ];
 
-  // Automatically advance non-video slides after a fixed duration.
-  // Video slides advance only after the video has finished playing.
+  /* -------------------- AUTO SLIDE -------------------- */
   useEffect(() => {
     const current = heroSlides[activeSlide];
-
-    if (current.mode === 'video') {
-      return undefined;
-    }
+    if (current.mode === 'video') return;
 
     const timer = setTimeout(() => {
       setActiveSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 3000); // ~3s for image-based slides
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [activeSlide]);
 
   const currentSlide = heroSlides[activeSlide];
 
+  /* ========================== RENDER ========================== */
   return (
     <div className="home-page">
       <Navbar />
 
+      {/* ---------------- HERO ---------------- */}
       <section className="home-hero">
-        <div
-          className={`home-hero-media-wrapper ${currentSlide.image?.includes('hero_baby') ? 'hero-media-baby' : ''
-            }`}
-        >
-          {currentSlide.mode === 'video' ? (
-            <video
-              ref={videoRef}
-              key={currentSlide.id}
-              className="hero-media"
-              src={currentSlide.video}
-              autoPlay
-              muted
-              playsInline
-              onLoadedMetadata={() => {
-                if (videoRef.current) {
-                  videoRef.current.playbackRate = 1.2; // play ~20% faster
-                }
-              }}
-              onEnded={() =>
-                setActiveSlide((prev) => (prev + 1) % heroSlides.length)
-              }
-            />
-          ) : (
-            <img
-              className="hero-media"
-              src={currentSlide.image}
-              alt="Stack of soft cotton pieces"
-              style={{ objectPosition: currentSlide.objectPosition || 'center center' }}
-            />
-          )}
+        <div className="home-hero-media-wrapper">
+          <img
+            className="hero-media"
+            src={currentSlide.image}
+            alt="Hero slide"
+            style={{
+              objectPosition:
+                currentSlide.objectPosition || 'center center',
+            }}
+          />
         </div>
 
         <div className="home-hero-overlay">
           <div className="container">
             <motion.div
-              className={`home-hero-copy ${currentSlide.mode === 'video' ? 'hero-copy-on-video' : ''} ${currentSlide.id !== 0 ? 'hero-bottom-right' : ''}`}
+              className={`home-hero-copy ${
+                currentSlide.id !== 0 ? 'hero-bottom-right' : ''
+              }`}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              {(currentSlide.mode === 'full' ||
-                (currentSlide.mode === 'video' && currentSlide.title)) && (
-                  <>
-                    <h1 className="home-hero-title" style={currentSlide.textMode === 'light' ? { color: '#fff' } : {}}>
-                      {currentSlide.title}
-                    </h1>
-                    <div className="home-hero-actions">
-                      <Link to="/collection" className="btn btn-primary" style={currentSlide.textMode === 'light' ? { marginTop: '1rem', background: '#fff', color: '#000', border: 'none' } : {}}>
-                        Shop Now
-                      </Link>
-                    </div>
-                    {currentSlide.id === 0 && (
-                      <div className="hero-badges-row">
-                        <span>Natural fibres</span>
-                        <span>In-house weaving</span>
-                        <span>Made in India</span>
-                      </div>
-                    )}
-                  </>
-                )}
+              <h1 className="home-hero-title">{currentSlide.title}</h1>
+
+              <div className="home-hero-actions">
+                <Link to="/collection" className="btn btn-primary">
+                  Shop Now
+                </Link>
+              </div>
+
+              {currentSlide.id === 0 && (
+                <div className="hero-badges-row">
+                  <span>Natural fibres</span>
+                  <span>In-house weaving</span>
+                  <span>Made in India</span>
+                </div>
+              )}
             </motion.div>
           </div>
         </div>
 
-        {/* Arrows and dots over the image (inside carousel) */}
+        {/* Carousel controls */}
         <div className="hero-carousel-controls">
           <button
             className="hero-arrow hero-arrow-left"
             onClick={() =>
               setActiveSlide(
-                (prev) => (prev - 1 + heroSlides.length) % heroSlides.length,
+                (prev) =>
+                  (prev - 1 + heroSlides.length) %
+                  heroSlides.length
               )
             }
-            aria-label="Previous slide"
           >
             <ChevronLeft size={20} />
           </button>
+
           <div className="hero-carousel-dots">
             {heroSlides.map((slide, index) => (
               <button
@@ -344,23 +338,24 @@ const Home = () => {
                 className={`hero-dot ${index === activeSlide ? 'active' : ''
                   }`}
                 onClick={() => setActiveSlide(index)}
-                aria-label={`Go to slide ${index + 1}`}
               />
             ))}
           </div>
+
           <button
             className="hero-arrow hero-arrow-right"
             onClick={() =>
-              setActiveSlide((prev) => (prev + 1) % heroSlides.length)
+              setActiveSlide(
+                (prev) => (prev + 1) % heroSlides.length
+              )
             }
-            aria-label="Next slide"
           >
             <ChevronRight size={20} />
           </button>
         </div>
       </section>
 
-      {/* Category tiles */}
+      {/* ---------------- CATEGORIES ---------------- */}
       <Section
         id="categories"
         title="Shop by category"
@@ -373,38 +368,36 @@ const Home = () => {
         </div>
       </Section>
 
-      {/* Custom & made-for-you section */}
+      {/* ---------------- CUSTOM ---------------- */}
       <Section
         id="custom"
         bg="alt"
         title="Sized and styled for your space"
-        subtitle="Create combinations that suit your home—from colours to textures and sets."
+        subtitle="Create combinations that suit your home."
       >
         <div className="custom-grid">
           <div className="custom-copy">
             <h3>Made-to-order options</h3>
             <p>
-              Experience the luxury of personalized home textiles. Whether you need specific dimensions for your unique furniture or a curated bundle for a complete home makeover, we are here to craft it for you.
-            </p>
-            <p>
-              Our design team works closely with you to select the perfect weaves and colors that harmonize with your interior decor, ensuring every piece reflects your personal style and comfort needs.
+              Experience the luxury of personalized home textiles,
+              tailored for your space and lifestyle.
             </p>
             <ul className="custom-list">
-              <li>Customized sets and premium hampers perfect for gifting</li>
-              <li>Coordinated colour palettes that seamlessly flow across rooms</li>
-              <li>Direct support via chat or email for expert sizing advice</li>
+              <li>Customized sets and hampers</li>
+              <li>Coordinated colour palettes</li>
+              <li>Direct sizing support</li>
             </ul>
           </div>
           <div className="custom-image-block">
             <img
               src="/images/design_purple.png"
-              alt="Stack of folded textiles"
+              alt="Custom textiles"
             />
           </div>
         </div>
       </Section>
 
-      {/* Featured products */}
+      {/* ---------------- FEATURED ---------------- */}
       <Section
         id="featured"
         title="Featured pieces"
@@ -421,14 +414,11 @@ const Home = () => {
         </div>
       </Section>
 
-      {/* Cotton philosophy / story teaser */}
-
-
-      {/* Testimonials */}
+      {/* ---------------- TESTIMONIALS ---------------- */}
       <Section
         id="reviews"
         title="What customers can say here"
-        subtitle="Short reviews that speak about touch, comfort and durability."
+        subtitle="Short reviews about touch and comfort."
       >
         <div className="testimonial-grid">
           {testimonials.map((item) => (
@@ -437,12 +427,12 @@ const Home = () => {
         </div>
       </Section>
 
-      {/* Blog / content teasers */}
+      {/* ---------------- BLOG ---------------- */}
       <Section
         id="content"
         bg="alt"
         title="From the journal"
-        subtitle="Use this section to link to articles, guides or campaigns."
+        subtitle="Articles, guides and campaigns."
       >
         <div className="blog-grid">
           {blogTeasers.map((item) => (
