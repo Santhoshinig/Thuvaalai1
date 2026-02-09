@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import ProductModal from '../components/ProductModal';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRight, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ALL_PRODUCTS } from '../data/products';
 import '../App.css';
 
 /* -------------------- SECTION WRAPPER -------------------- */
@@ -25,10 +24,7 @@ const Section = ({ title, subtitle, children, id, bg = 'default' }) => (
         transition={{ duration: 0.8 }}
       >
         <div className="section-header-row">
-          <div>
-            <h2 className="section-title">{title}</h2>
-            {subtitle && <p className="section-subtitle">{subtitle}</p>}
-          </div>
+          <h2 className="section-title">{title}</h2>
         </div>
         {children}
       </motion.div>
@@ -55,37 +51,42 @@ const CategoryCard = ({ item }) => (
         style={{ backgroundImage: `url(${item.image})` }}
       />
       <h3 className="home-category-circle-title">{item.title}</h3>
-      {item.description && (
-        <p className="home-category-description">{item.description}</p>
-      )}
     </motion.div>
   </Link>
 );
 
 /* -------------------- PRODUCT CARD -------------------- */
-const FeaturedProductCard = ({ item, onClick }) => (
-  <motion.div
-    className="product-card"
-    whileHover={{ y: -8 }}
-    initial={{ opacity: 0, scale: 0.96 }}
-    whileInView={{ opacity: 1, scale: 1 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.4 }}
-    onClick={() => onClick(item)}
-  >
-    <div className="product-image-wrapper">
-      <div
-        className="product-image-placeholder"
-        style={{ backgroundImage: `url(${item.image})` }}
-      />
-    </div>
-    <div className="product-info">
-      <span className="product-tag">{item.tag}</span>
-      <h3>{item.name}</h3>
-      <p className="price">{item.price}</p>
-    </div>
-  </motion.div>
-);
+const FeaturedProductCard = ({ item }) => {
+  const navigate = useNavigate();
+  return (
+    <motion.div
+      className="product-card"
+      whileHover={{ y: -8 }}
+      initial={{ opacity: 0, scale: 0.96 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
+      onClick={() => navigate(`/product/${item.id}`)}
+    >
+      <div className="product-image-wrapper">
+        <div
+          className="product-image-placeholder"
+          style={{ backgroundImage: `url(${item.image})` }}
+        />
+      </div>
+      <div className="product-info">
+        <span className="product-tag">{item.tag}</span>
+        <h3>{item.name}</h3>
+        <div className="price-display" style={{ display: 'flex', justifyContent: 'center', gap: '0.8rem', alignItems: 'center' }}>
+          {item.originalPrice && (
+            <span className="old-price" style={{ color: '#aaa', textDecoration: 'line-through', fontSize: '0.9rem' }}>{item.originalPrice}</span>
+          )}
+          <span className="current-price" style={{ color: 'var(--color-accent)', fontWeight: '700', fontSize: '1.1rem' }}>{item.price}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 /* -------------------- TESTIMONIAL CARD -------------------- */
 const TestimonialCard = ({ item }) => (
@@ -111,18 +112,7 @@ const TestimonialCard = ({ item }) => (
 
 /* ========================== HOME ========================== */
 const Home = () => {
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
-  const location = useLocation();
-
-  const handleExploreCategories = (e) => {
-    if (location.pathname === '/') {
-      e.preventDefault();
-      document
-        .getElementById('categories')
-        ?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   /* -------------------- HERO SLIDES -------------------- */
   const heroSlides = [
@@ -167,55 +157,32 @@ const Home = () => {
       id: 1,
       slug: 'bath-towels',
       title: 'Bath Towels',
-      description: 'Soft, absorbent bath towels in everyday-friendly weaves.',
       image: '/images/product_white.png',
     },
     {
       id: 2,
       slug: 'hooded-towels',
       title: 'Hooded Towels',
-      description: 'Cozy wraps designed especially for little ones.',
       image: '/images/product_pink.png',
     },
     {
       id: 3,
       slug: 'washcloths',
       title: 'Washcloths & Sets',
-      description: 'Gentle cloths and bundles for daily care routines.',
       image: '/images/DSCF3845.JPG',
     },
     {
       id: 4,
       slug: 'gift-boxes',
       title: 'Gift Boxes',
-      description: 'Ready-to-gift combinations for special occasions.',
       image: '/images/DSCF3853.JPG',
     },
   ];
 
-  const featuredProducts = [
-    {
-      id: 1,
-      name: 'Everyday Cotton Bath Towel',
-      price: '₹1,899',
-      tag: 'Best seller',
-      image: '/images/product_white.png',
-    },
-    {
-      id: 2,
-      name: 'Bordered Hooded Towel',
-      price: '₹2,299',
-      tag: 'New arrival',
-      image: '/images/product_pink.png',
-    },
-    {
-      id: 3,
-      name: 'Soft Weave Washcloth Set',
-      price: '₹899',
-      tag: 'Online exclusive',
-      image: '/images/product_blue.png',
-    },
-  ];
+  const featuredProducts = ALL_PRODUCTS.slice(0, 3).map(p => ({
+    ...p,
+    tag: p.id === 1 ? 'Best seller' : p.id === 2 ? 'New arrival' : 'Online exclusive'
+  }));
 
   const testimonials = [
     {
@@ -271,8 +238,6 @@ const Home = () => {
   /* ========================== RENDER ========================== */
   return (
     <div className="home-page">
-      <Navbar />
-
       {/* ---------------- HERO ---------------- */}
       <section className="home-hero">
         <div className="home-hero-media-wrapper">
@@ -290,9 +255,8 @@ const Home = () => {
         <div className="home-hero-overlay">
           <div className="container">
             <motion.div
-              className={`home-hero-copy ${
-                currentSlide.id !== 0 ? 'hero-bottom-right' : ''
-              }`}
+              className={`home-hero-copy ${currentSlide.id !== 0 ? 'hero-bottom-right' : ''
+                }`}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -359,7 +323,6 @@ const Home = () => {
       <Section
         id="categories"
         title="Shop by category"
-        subtitle="Browse by the pieces you reach for every day."
       >
         <div className="home-category-grid">
           {categoryTiles.map((item) => (
@@ -373,7 +336,6 @@ const Home = () => {
         id="custom"
         bg="alt"
         title="Sized and styled for your space"
-        subtitle="Create combinations that suit your home."
       >
         <div className="custom-grid">
           <div className="custom-copy">
@@ -401,14 +363,12 @@ const Home = () => {
       <Section
         id="featured"
         title="Featured pieces"
-        subtitle="A snapshot of what people tend to pick first."
       >
         <div className="product-grid">
           {featuredProducts.map((item) => (
             <FeaturedProductCard
               key={item.id}
               item={item}
-              onClick={setSelectedProduct}
             />
           ))}
         </div>
@@ -417,8 +377,7 @@ const Home = () => {
       {/* ---------------- TESTIMONIALS ---------------- */}
       <Section
         id="reviews"
-        title="What customers can say here"
-        subtitle="Short reviews about touch and comfort."
+        title="What customers say"
       >
         <div className="testimonial-grid">
           {testimonials.map((item) => (
@@ -432,7 +391,6 @@ const Home = () => {
         id="content"
         bg="alt"
         title="From the journal"
-        subtitle="Articles, guides and campaigns."
       >
         <div className="blog-grid">
           {blogTeasers.map((item) => (
@@ -452,11 +410,6 @@ const Home = () => {
           ))}
         </div>
       </Section>
-
-      <ProductModal
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
 
       <Footer />
     </div>

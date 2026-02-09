@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import InstaAnimation from '../components/InstaAnimation';
@@ -13,7 +12,6 @@ const Story = () => {
 
     return (
         <div className="story-page">
-            <Navbar />
             <div className="section" style={{ paddingTop: '12rem', minHeight: '100vh', background: 'var(--color-bg-alt)' }}>
                 <div className="container">
                     <motion.div
